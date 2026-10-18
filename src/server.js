@@ -65,6 +65,10 @@ app.get('/api/health', (req, res) => {
 // SPA fallback: Chuyển hướng các trang về index.html (Express 5 compatible)
 app.use((req, res, next) => {
   if (req.method === 'GET' && !req.path.startsWith('/api')) {
+    // Không trả về index.html cho các file tĩnh bị thiếu để tránh lỗi MIME type
+    if (/\.(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|map)$/i.test(req.path)) {
+      return res.status(404).send('Asset not found');
+    }
     return res.sendFile(path.join(__dirname, '../public/index.html'));
   }
   if (req.path.startsWith('/api')) {
@@ -83,12 +87,14 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log('========================================================');
-  console.log(`🌲 WOODHOME E-COMMERCE SERVER ĐANG CHẠY TẠI CỔNG ${PORT}`);
-  console.log(`🌐 Truy cập website: http://localhost:${PORT}`);
-  console.log(`📚 API Docs / Health: http://localhost:${PORT}/api/health`);
-  console.log('========================================================');
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log('========================================================');
+    console.log(`🌲 WOODHOME E-COMMERCE SERVER ĐANG CHẠY TẠI CỔNG ${PORT}`);
+    console.log(`🌐 Truy cập website: http://localhost:${PORT}`);
+    console.log(`📚 API Docs / Health: http://localhost:${PORT}/api/health`);
+    console.log('========================================================');
+  });
+}
 
 module.exports = app;
