@@ -1,16 +1,19 @@
 {
   "name": "doan-back",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "WoodHome E-Commerce Backend - Nội thất gỗ tự nhiên cao cấp",
+  "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
     "dev": "node src/server.js",
     "init-db": "node src/utils/initDb.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": ["ecommerce", "furniture", "woodhome", "nodejs", "express"],
+  "author": "WoodHome Team",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
