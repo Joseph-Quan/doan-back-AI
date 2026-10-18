@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WoodHome — Nội Thất Gỗ Tự Nhiên Cao Cấp</title>
+  <meta name="description"
+    content="Website thương mại điện tử chuyên cung cấp nội thất gỗ sồi, óc chó, gõ đỏ cao cấp với quy trình đặt hàng, thanh toán VietQR và bảo hành chính hãng.">
+
+  <!-- Google Fonts: Playfair Display & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <link rel="icon" type="image/png" href="/images/logo.png">
+  <link rel="stylesheet" href="/css/style.css">
+  <!-- Chart.js for Donut & Analytical Charts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+  <!-- ========================================================
+       1. AUTH GATEWAY (Hiển thị ngay khi chưa đăng nhập theo PRD)
+       ======================================================== -->
+  <div class="auth-overlay" id="authOverlay">
+    <div class="auth-hero-side">
+      <div class="auth-hero-content">
+        <div class="auth-hero-logo">
+          🌲 WOOD<span>HOME</span>
+        </div>
+        <div class="auth-hero-text">
+          <h1>Tinh Hoa Gỗ Tự Nhiên Cho Không Gian Sống</h1>
+          <p>Trải nghiệm mua sắm nội thất đẳng cấp thượng lưu với 100% gỗ tự nhiên nguyên tấm được tuyển chọn khắt khe.
+          </p>
+          <ul class="auth-features-list">
+            <li>✨ Đăng nhập để xem giá ưu đãi thành viên và bảo hành trọn đời</li>
+            <li>💳 Hỗ trợ thanh toán tiền mặt (COD), VietQR Napas và thẻ Visa</li>
+            <li>🚚 Miễn phí vận chuyển & lắp đặt tận nơi cho đơn hàng từ 5 triệu</li>
+            <li>🛡️ Bảo mật tài khoản với cơ chế phục hồi qua câu hỏi bảo mật</li>
+          </ul>
+        </div>
+      </div>
+      <div class="auth-hero-footer">
+        © 2026 WoodHome Furniture Co., Ltd. Tất cả quyền được bảo lưu.
+      </div>
+    </div>
+
+    <div class="auth-form-side">
+      <div class="auth-box">
+        <div style="text-align: center; margin-bottom: 24px;">
+          <h2 class="font-serif" style="font-size: 1.8rem; color: var(--wood-900);">Chào Mừng Đến WoodHome</h2>
+          <p class="text-muted" style="font-size: 0.9rem;">Vui lòng đăng nhập hoặc tạo tài khoản để vào cửa hàng</p>
+        </div>
+
+        <div class="auth-tabs">
+          <button class="auth-tab-btn active" id="tabBtnLogin" onclick="switchAuthTab('login')">Đăng Nhập</button>
+          <button class="auth-tab-btn" id="tabBtnRegister" onclick="switchAuthTab('register')">Tạo Tài Khoản</button>
+        </div>
+
+        <!-- FORM ĐĂNG NHẬP -->
+        <form id="loginForm">
+          <div class="form-group">
+            <label class="form-label">Email hoặc Số điện thoại</label>
+            <input type="text" class="form-input" id="loginEmail" placeholder="vd: khachhang@gmail.com" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Mật khẩu</label>
+            <div class="form-input-wrap">
+              <input type="password" class="form-input" id="loginPassword" placeholder="Nhập mật khẩu của bạn" required>
+              <button type="button" class="form-toggle-pwd"
+                onclick="togglePasswordVisibility('loginPassword', this)">👁</button>
+            </div>
+          </div>
+          <div class="form-row-actions">
+            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+              <input type="checkbox" checked> Ghi nhớ đăng nhập
+            </label>
+            <a href="javascript:void(0)" onclick="openForgotPasswordModal()" class="text-gold fw-600">Quên mật khẩu?</a>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Đăng Nhập Vào Cửa Hàng</button>
+        </form>
+
+        <!-- FORM ĐĂNG KÝ -->
+        <form id="registerForm" style="display: none;">
+          <div class="form-group">
+            <label class="form-label">Họ và tên *</label>
+            <input type="text" class="form-input" id="regFullName" placeholder="Nguyễn Văn A" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Địa chỉ Email *</label>
+            <input type="email" class="form-input" id="regEmail" placeholder="email@domain.com" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Số điện thoại</label>
+            <input type="tel" class="form-input" id="regPhone" placeholder="09xxxxxxxx">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Mật khẩu (tối thiểu 8 ký tự) *</label>
+            <div class="form-input-wrap">
+              <input type="password" class="form-input" id="regPassword" placeholder="••••••••" required>
+              <button type="button" class="form-toggle-pwd"
+                onclick="togglePasswordVisibility('regPassword', this)">👁</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Câu hỏi bảo mật (dùng để khôi phục mật khẩu) *</label>
+            <select class="form-input" id="regQuestion">
+              <option value="1">Tên trường tiểu học của bạn là gì?</option>
+              <option value="2">Tên thú cưng đầu tiên của bạn là gì?</option>
+              <option value="3">Tên thành phố bạn sinh ra là gì?</option>
+              <option value="4">Biệt danh thời thơ ấu của bạn là gì?</option>
+              <option value="5">Tên người thầy/cô giáo yêu thích của bạn là gì?</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Câu trả lời bảo mật *</label>
+            <input type="text" class="form-input" id="regAnswer" placeholder="Nhập câu trả lời bí mật" required>
+          </div>
+          <button type="submit" class="btn btn-gold btn-block">Hoàn Tất Đăng Ký</button>
+        </form>
+
+        <!-- TÀI KHOẢN MẪU DÀNH CHO TEST NHANH -->
+        <div class="demo-account-box">
+          <h4>⚡ Đăng nhập nhanh bằng tài khoản mẫu:</h4>
+          <div class="demo-pills">
+            <button type="button" class="demo-pill-btn" onclick="fillDemoAccount('khachhang@gmail.com', 'Admin@123')">
+              <span>👤 <strong>Khách Hàng</strong> (khachhang@gmail.com)</span>
+              <span class="text-gold">Admin@123</span>
+            </button>
+            <button type="button" class="demo-pill-btn" onclick="fillDemoAccount('staff@woodhome.vn', 'Admin@123')">
+              <span>💼 <strong>Nhân Viên Bán Hàng</strong> (staff@woodhome.vn)</span>
+              <span class="text-gold">Admin@123</span>
+            </button>
+            <button type="button" class="demo-pill-btn" onclick="fillDemoAccount('admin@woodhome.vn', 'Admin@123')">
+              <span>👑 <strong>Quản Trị Viên</strong> (admin@woodhome.vn)</span>
+              <span class="text-gold">Admin@123</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       2. TOP ANNOUNCEMENT BAR
+       ======================================================== -->
+  <aside class="announcement-bar" aria-label="Khuyến mãi">
+    <div class="container">
+      ✨ <strong>ĐẶC QUYỀN WOODHOME:</strong> Miễn phí vận chuyển toàn quốc cho đơn hàng từ 5.000.000đ | Nhập mã
+      <strong>WELCOME10</strong> giảm 10% đơn đầu tiên!
+    </div>
+  </aside>
+
+  <!-- ========================================================
+       3. SITE HEADER
+       ======================================================== -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="javascript:void(0)" onclick="switchMainView('store')" class="header-logo">
+        🌲 WOOD<span>HOME</span>
+      </a>
+
+      <div class="header-search">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="headerSearchInput" placeholder="Tìm bàn ăn, giường gỗ óc chó, kệ tivi...">
+      </div>
+
+      <div class="header-actions">
+        <button class="icon-btn" onclick="switchMainView('orders')" title="Đơn hàng của tôi">
+          📋
+        </button>
+
+        <button class="icon-btn" onclick="openCartDrawer()" title="Giỏ hàng">
+          🛒
+          <span class="icon-badge" id="cartBadge" style="display: none;">0</span>
+        </button>
+
+        <div class="user-menu-wrap" id="userNavSection">
+          <button class="user-avatar-btn" onclick="document.getElementById('userDropdown').classList.toggle('show')">
+            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80"
+              id="headerUserAvatar" class="user-avatar-img">
+            <div style="text-align: left; line-height: 1.2;">
+              <div id="headerUserName" style="font-weight: 600; font-size: 0.88rem;">Khách hàng</div>
+              <div id="headerUserRole" style="font-size: 0.72rem; color: var(--gold-500); font-weight: 600;">Khách hàng
+              </div>
+            </div>
+            <span style="font-size: 0.7rem; color: var(--text-light);">▼</span>
+          </button>
+
+          <div class="user-dropdown" id="userDropdown">
+            <button class="user-dropdown-item"
+              onclick="switchMainView('orders'); document.getElementById('userDropdown').classList.remove('show');">
+              📋 Đơn hàng của tôi
+            </button>
+            <button class="user-dropdown-item" id="adminTabLink" style="display: none;"
+              onclick="switchMainView('admin'); document.getElementById('userDropdown').classList.remove('show');">
+              ⚙️ Trang quản trị
+            </button>
+            <div style="border-top: 1px solid var(--border); margin: 6px 0;"></div>
+            <button class="user-dropdown-item text-danger" onclick="handleLogout()">
+              🚪 Đăng xuất
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Secondary navigation menu -->
+    <nav class="sub-nav">
+      <div class="container">
+        <ul class="sub-nav-list">
+          <li class="sub-nav-item"><a href="javascript:void(0)" onclick="switchMainView('store')" class="active">Trang
+              Chủ</a></li>
+          <li class="sub-nav-item"><a href="javascript:void(0)" onclick="filterCategory('ban-ghe')">Bàn Ghế</a></li>
+          <li class="sub-nav-item"><a href="javascript:void(0)" onclick="filterCategory('giuong-ngu')">Giường Ngủ</a>
+          </li>
+          <li class="sub-nav-item"><a href="javascript:void(0)" onclick="filterCategory('ban-an')">Bàn Ăn Gia Đình</a>
+          </li>
+          <li class="sub-nav-item"><a href="javascript:void(0)" onclick="filterCategory('tu-va-ke')">Tủ & Kệ TV</a></li>
+          <li class="sub-nav-item"><a href="javascript:void(0)" onclick="filterCategory('ban-lam-viec')">Bàn Làm
+              Việc</a></li>
+          <li class="sub-nav-item"><a href="javascript:void(0)" onclick="filterCategory('sofa-go')">Sofa Gỗ Cao Cấp</a>
+          </li>
+          <li class="sub-nav-item"><a href="javascript:void(0)" onclick="switchMainView('orders')">Theo Dõi Đơn Hàng</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <!-- ========================================================
+       4. MAIN VIEWS
+       ======================================================== -->
+  <main>
+    <!-- VIEW 1: CỬA HÀNG (STORE FRONT) -->
+    <section class="main-view" id="view-store">
+      <!-- HERO BANNER SLIDER -->
+      <section class="hero-slider" aria-label="Banner quảng cáo nổi bật">
+        <div class="slide-track" id="heroSlideTrack"></div>
+        <div class="slider-dots" id="heroSlideDots"></div>
+        <button class="slider-arrow slider-arrow-left" onclick="prevSlide()" aria-label="Trước">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+        </button>
+        <button class="slider-arrow slider-arrow-right" onclick="nextSlide()" aria-label="Tiếp">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </button>
+        <div class="slider-progress">
+          <div class="slider-progress-bar" id="sliderProgressBar"></div>
+        </div>
+      </section>
+
+      <!-- CATALOG SECTION -->
+      <section class="section" id="products">
+        <div class="container">
+          <div class="section-header">
+            <span class="section-subtitle">DANH MỤC NỘI THẤT</span>
+            <h2 class="section-title">Bộ Sưu Tập Gỗ Tự Nhiên</h2>
+          </div>
+
+          <!-- Category Pills -->
+          <div class="categories-bar" id="categoriesBar"></div>
+
+          <!-- Filter & Sort Bar -->
+          <div class="filter-sort-bar">
+            <div class="filter-group">
+              <span class="fw-600" style="font-size: 0.9rem;">Sắp xếp theo:</span>
+              <select class="filter-select" id="sortSelect" onchange="state.sortOrder = this.value; renderProducts();">
+                <option value="newest">Mới nhất</option>
+                <option value="bestseller">Bán chạy nhất</option>
+                <option value="price_asc">Giá: Thấp đến Cao</option>
+                <option value="price_desc">Giá: Cao đến Thấp</option>
+                <option value="rating">Đánh giá cao nhất</option>
+              </select>
+            </div>
+            <div style="font-size: 0.88rem; color: var(--text-muted);" id="catalogResultCount">
+              Hiển thị các sản phẩm có sẵn tại showroom
+            </div>
+          </div>
+
+          <!-- Product Grid -->
+          <div class="product-grid" id="productGrid"></div>
+        </div>
+      </section>
+
+      <!-- BRAND VALUES / FEATURES -->
+      <section
+        style="background: var(--wood-50); padding: 60px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+        <div class="container"
+          style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 30px; text-align: center;">
+          <div>
+            <div style="font-size: 2.2rem; margin-bottom: 12px;">🌲</div>
+            <h4 class="font-serif" style="font-size: 1.15rem; margin-bottom: 8px;">100% Gỗ Tự Nhiên</h4>
+            <p class="text-muted" style="font-size: 0.88rem;">Gỗ Sồi Nga, Óc Chó Mỹ và Gõ Đỏ được tẩm sấy tiêu chuẩn
+              chống cong vênh.</p>
+          </div>
+          <div>
+            <div style="font-size: 2.2rem; margin-bottom: 12px;">🛡️</div>
+            <h4 class="font-serif" style="font-size: 1.15rem; margin-bottom: 8px;">Bảo Hành 2 - 5 Năm</h4>
+            <p class="text-muted" style="font-size: 0.88rem;">Cam kết bảo trì trọn đời, bảo hành mối mọt và hỗ trợ làm
+              mới bề mặt định kỳ.</p>
+          </div>
+          <div>
+            <div style="font-size: 2.2rem; margin-bottom: 12px;">🚚</div>
+            <h4 class="font-serif" style="font-size: 1.15rem; margin-bottom: 8px;">Giao & Lắp Tận Nhà</h4>
+            <p class="text-muted" style="font-size: 0.88rem;">Đội ngũ thợ mộc chuyên nghiệp vận chuyển an toàn và căn
+              chỉnh hoàn thiện tại phòng.</p>
+          </div>
+          <div>
+            <div style="font-size: 2.2rem; margin-bottom: 12px;">💳</div>
+            <h4 class="font-serif" style="font-size: 1.15rem; margin-bottom: 8px;">Thanh Toán Linh Hoạt</h4>
+            <p class="text-muted" style="font-size: 0.88rem;">Tiền mặt khi nhận hàng (COD), quét mã VietQR tự động hoặc
+              thanh toán thẻ Visa bảo mật.</p>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- VIEW 2: ĐƠN HÀNG CỦA TÔI (MY ORDERS) -->
+    <section class="main-view section" id="view-orders" style="display: none;">
+      <div class="container" style="max-width: 900px;">
+        <div class="section-header" style="text-align: left; margin-bottom: 30px;">
+          <button class="btn btn-outline" style="padding: 6px 14px; margin-bottom: 16px;"
+            onclick="switchMainView('store')">← Quay lại cửa hàng</button>
+          <span class="section-subtitle">LỊCH SỬ GIAO DỊCH</span>
+          <h2 class="section-title">Đơn Hàng Của Bạn</h2>
+        </div>
+        <div id="ordersListContainer"></div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: TRANG QUẢN TRỊ (ADMIN PORTAL) -->
+    <section class="main-view section" id="view-admin" style="display: none;">
+      <div class="container">
+        <!-- Header & CSDL Status Badge -->
+        <div
+          style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 24px;">
+          <div>
+            <button class="btn btn-outline" style="padding: 6px 14px; margin-bottom: 10px;"
+              onclick="switchMainView('store')">← Về trang bán hàng</button>
+            <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+              <h2 class="section-title" style="margin-bottom: 0;">Bảng Quản Trị Hệ Thống WoodHome</h2>
+              <!-- <span id="adminDbStatusBadge" style="background: #e6f7ed; color: #0d8a43; border: 1px solid #a3e0be; padding: 5px 12px; border-radius: 20px; font-size: 0.82rem; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+                🟢 CSDL: MySQL XAMPP (woodhome)
+              </span> -->
+            </div>
+          </div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button class="btn btn-outline" style="padding: 8px 16px; font-size: 0.88rem;"
+              onclick="loadAdminDashboard(); loadAdminProducts(); loadAdminOrders();">
+              🔄 Làm mới
+            </button>
+            <button class="btn btn-gold" style="padding: 8px 18px; font-size: 0.88rem;" onclick="openAddProductModal()">
+              + Thêm Sản Phẩm Mới
+            </button>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="admin-tab-nav"
+          style="display: flex; gap: 8px; border-bottom: 2px solid var(--border); margin-bottom: 26px; overflow-x: auto;">
+          <button class="admin-tab-btn active" id="tabBtn-stats" onclick="switchAdminTab('stats')">
+            📊 Thống Kê & Doanh Thu
+          </button>
+          <button class="admin-tab-btn" id="tabBtn-products" onclick="switchAdminTab('products')">
+            🪵 Quản Lý Sản Phẩm
+          </button>
+          <button class="admin-tab-btn" id="tabBtn-orders" onclick="switchAdminTab('orders')">
+            🛒 Quản Lý Đơn Hàng
+          </button>
+        </div>
+
+        <!-- ================= TAB 1: THỐNG KÊ & DOANH THU ================= -->
+        <div id="adminTab-stats" class="admin-tab-pane">
+          <!-- KPI Metrics -->
+          <div
+            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 18px; margin-bottom: 28px;">
+            <div class="admin-stat-card">
+              <div class="stat-icon-wrap">💰</div>
+              <div>
+                <div class="stat-value text-gold" id="adminStatRevenueToday">0 đ</div>
+                <div class="stat-label">Doanh thu hôm nay (đã giao)</div>
+              </div>
+            </div>
+            <div class="admin-stat-card">
+              <div class="stat-icon-wrap">📈</div>
+              <div>
+                <div class="stat-value" id="adminStatRevenueMonth">0 đ</div>
+                <div class="stat-label">Doanh thu tháng (đã giao)</div>
+              </div>
+            </div>
+            <div class="admin-stat-card">
+              <div class="stat-icon-wrap">📦</div>
+              <div>
+                <div class="stat-value" id="adminStatOrdersToday">0</div>
+                <div class="stat-label">Đơn hàng hôm nay</div>
+              </div>
+            </div>
+            <div class="admin-stat-card">
+              <div class="stat-icon-wrap">⏳</div>
+              <div>
+                <div class="stat-value text-danger" id="adminStatPending">0</div>
+                <div class="stat-label">Đơn chờ xác nhận</div>
+              </div>
+            </div>
+            <div class="admin-stat-card">
+              <div class="stat-icon-wrap">⚠️</div>
+              <div>
+                <div class="stat-value text-warning" id="adminStatLowStock">0</div>
+                <div class="stat-label">Sản phẩm sắp hết</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- BIỂU ĐỒ HÌNH VÒNG (DONUT CHART) SO SÁNH 3 PHƯƠNG THỨC THANH TOÁN -->
+          <div
+            style="background: #fff; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 26px; margin-bottom: 30px; box-shadow: var(--shadow-sm);">
+            <div
+              style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 14px;">
+              <div>
+                <h3 class="font-serif" style="font-size: 1.35rem; color: var(--wood-900); margin-bottom: 4px;">
+                  🍩 Biểu Đồ Hình Vòng So Sánh Phương Thức Thanh Toán
+                </h3>
+                <p class="text-muted" style="font-size: 0.88rem; margin-bottom: 0;">
+                  Doanh thu thực nhận từ đơn <strong>Đã giao thành công</strong> (loại trừ đơn huỷ) theo <strong>Tiền mặt (COD)</strong>, <strong>Chuyển khoản (VietQR)</strong> và <strong>Thẻ (Visa/MasterCard)</strong>
+                </p>
+              </div>
+              <span id="paymentTotalOrdersBadge" class="badge badge-gold"
+                style="font-size: 0.88rem; padding: 6px 14px;">
+                Tổng: 0 đơn hàng
+              </span>
+            </div>
+
+            <div
+              style="display: grid; grid-template-columns: minmax(280px, 1fr) 1.3fr; gap: 32px; align-items: center;">
+              <!-- Cột trái: Khung Canvas Vẽ Hình Vòng Donut -->
+              <div
+                style="position: relative; width: 100%; max-width: 320px; margin: 0 auto; min-height: 280px; display: flex; align-items: center; justify-content: center;">
+                <canvas id="paymentDonutCanvas" width="280" height="280"></canvas>
+                <div id="donutCenterLabel" style="position: absolute; text-align: center; pointer-events: none;">
+                  <div
+                    style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">
+                    Doanh thu</div>
+                  <div id="donutCenterRevenue" style="font-size: 1.15rem; font-weight: 700; color: var(--wood-900);">0 đ
+                  </div>
+                </div>
+              </div>
+
+              <!-- Cột phải: 3 Thẻ chi tiết của từng phương thức -->
+              <div style="display: flex; flex-direction: column; gap: 14px;" id="paymentComparisonCards">
+                <!-- Card COD -->
+                <div class="payment-card-item cod">
+                  <div style="display: flex; align-items: center; gap: 14px;">
+                    <div
+                      style="width: 44px; height: 44px; border-radius: 8px; background: #e6f7ed; color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
+                      💵
+                    </div>
+                    <div>
+                      <div style="font-weight: 700; color: var(--wood-900); font-size: 1rem;">Tiền mặt (COD)</div>
+                      <div style="font-size: 0.82rem; color: var(--text-muted);">Thanh toán khi nhận hàng</div>
+                    </div>
+                  </div>
+                  <div style="text-align: right;">
+                    <div style="font-weight: 700; font-size: 1.1rem; color: #10b981;" id="statCodPercent">0%</div>
+                    <div style="font-size: 0.84rem; color: var(--text-main); font-weight: 600;">
+                      <span id="statCodCount">0 đơn</span> • <span id="statCodRevenue">0 đ</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Card VietQR -->
+                <div class="payment-card-item qr_transfer">
+                  <div style="display: flex; align-items: center; gap: 14px;">
+                    <div
+                      style="width: 44px; height: 44px; border-radius: 8px; background: #fef3c7; color: #d97706; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
+                      📲
+                    </div>
+                    <div>
+                      <div style="font-weight: 700; color: var(--wood-900); font-size: 1rem;">Chuyển khoản (VietQR)
+                      </div>
+                      <div style="font-size: 0.82rem; color: var(--text-muted);">Quét mã QR Napas 24/7</div>
+                    </div>
+                  </div>
+                  <div style="text-align: right;">
+                    <div style="font-weight: 700; font-size: 1.1rem; color: #d97706;" id="statQrPercent">0%</div>
+                    <div style="font-size: 0.84rem; color: var(--text-main); font-weight: 600;">
+                      <span id="statQrCount">0 đơn</span> • <span id="statQrRevenue">0 đ</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Card Visa -->
+                <div class="payment-card-item visa">
+                  <div style="display: flex; align-items: center; gap: 14px;">
+                    <div
+                      style="width: 44px; height: 44px; border-radius: 8px; background: #dbeafe; color: #2563eb; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
+                      💳
+                    </div>
+                    <div>
+                      <div style="font-weight: 700; color: var(--wood-900); font-size: 1rem;">Thẻ quốc tế (Visa/Master)
+                      </div>
+                      <div style="font-size: 0.82rem; color: var(--text-muted);">Bảo mật 3D-Secure 2.0</div>
+                    </div>
+                  </div>
+                  <div style="text-align: right;">
+                    <div style="font-weight: 700; font-size: 1.1rem; color: #2563eb;" id="statVisaPercent">0%</div>
+                    <div style="font-size: 0.84rem; color: var(--text-main); font-weight: 600;">
+                      <span id="statVisaCount">0 đơn</span> • <span id="statVisaRevenue">0 đ</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bảng Đơn Hàng Gần Đây -->
+          <div class="data-table-wrap">
+            <div
+              style="padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+              <h3 class="font-serif" style="font-size: 1.15rem; margin-bottom: 0;">Đơn Hàng Mới Nhất Cần Xử Lý</h3>
+              <button class="btn btn-outline" style="padding: 4px 10px; font-size: 0.8rem;"
+                onclick="switchAdminTab('orders')">Xem tất cả đơn hàng →</button>
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Mã đơn</th>
+                  <th>Khách hàng</th>
+                  <th>Tổng tiền</th>
+                  <th>Phương thức</th>
+                  <th>Cập nhật trạng thái</th>
+                  <th>Hành động</th>
+                </tr>
+              </thead>
+              <tbody id="adminOrdersTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ================= TAB 2: QUẢN LÝ SẢN PHẨM ================= -->
+        <div id="adminTab-products" class="admin-tab-pane" style="display: none;">
+          <div
+            style="background: #fff; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; margin-bottom: 24px; box-shadow: var(--shadow-sm);">
+            <div
+              style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 16px;">
+              <h3 class="font-serif" style="margin-bottom: 0; font-size: 1.25rem;">Danh Sách Toàn Bộ Sản Phẩm</h3>
+              <button class="btn btn-gold" onclick="openAddProductModal()">
+                + Thêm Sản Phẩm Mới
+              </button>
+            </div>
+
+            <!-- Thanh tìm kiếm & lọc sản phẩm -->
+            <div style="display: grid; grid-template-columns: 2fr 1.2fr 1fr auto; gap: 12px; align-items: center;">
+              <input type="text" id="adminProductSearchInput" class="form-input"
+                placeholder="🔍 Tìm theo tên sản phẩm hoặc mã SKU..."
+                onkeydown="if(event.key==='Enter') loadAdminProducts()">
+              <select id="adminProductCategoryFilter" class="form-input" onchange="loadAdminProducts()">
+                <option value="">-- Tất cả danh mục --</option>
+              </select>
+              <select id="adminProductStatusFilter" class="form-input" onchange="loadAdminProducts()">
+                <option value="">Tất cả trạng thái</option>
+                <option value="1">Đang kinh doanh</option>
+                <option value="0">Đã ngừng/Ẩn</option>
+              </select>
+              <button class="btn btn-outline" style="padding: 10px 16px;" onclick="loadAdminProducts()">Lọc</button>
+            </div>
+          </div>
+
+          <!-- Bảng Sản Phẩm -->
+          <div class="data-table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th style="width: 70px;">Ảnh</th>
+                  <th>Tên sản phẩm & SKU</th>
+                  <th>Danh mục</th>
+                  <th>Giá niêm yết</th>
+                  <th>Tồn kho</th>
+                  <th>Trạng thái</th>
+                  <th style="text-align: center; width: 140px;">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="adminProductsTableBody">
+                <tr>
+                  <td colspan="7" style="text-align: center; padding: 30px;">Đang tải danh sách sản phẩm...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ================= TAB 3: QUẢN LÝ ĐƠN HÀNG (MySQL XAMPP) ================= -->
+        <div id="adminTab-orders" class="admin-tab-pane" style="display: none;">
+          <div
+            style="background: #fff; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; margin-bottom: 24px; box-shadow: var(--shadow-sm);">
+            <div
+              style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 16px;">
+              <div>
+                <h3 class="font-serif" style="margin-bottom: 4px; font-size: 1.25rem;">Quản Lý Toàn Bộ Đơn Hàng</h3>
+                <div style="font-size: 0.85rem; color: var(--text-muted);">
+                  Tất cả đơn hàng được lưu trực tiếp vào CSDL MySQL trên XAMPP (Bảng <code>orders</code>,
+                  <code>order_items</code>, <code>transactions</code>).
+                </div>
+              </div>
+              <button class="btn btn-outline" style="padding: 8px 14px; font-size: 0.85rem;"
+                onclick="loadAdminOrders()">🔄 Tải lại đơn hàng</button>
+            </div>
+
+            <!-- Thanh lọc đơn hàng -->
+            <div style="display: grid; grid-template-columns: 2fr 1.2fr 1.2fr auto; gap: 12px; align-items: center;">
+              <input type="text" id="adminOrderSearchInput" class="form-input"
+                placeholder="🔍 Tìm theo mã đơn #WH... hoặc tên/SĐT khách..."
+                onkeydown="if(event.key==='Enter') loadAdminOrders()">
+              <select id="adminOrderStatusFilter" class="form-input" onchange="loadAdminOrders()">
+                <option value="">-- Tất cả trạng thái đơn --</option>
+                <option value="pending">Chờ xác nhận</option>
+                <option value="confirmed">Đã xác nhận</option>
+                <option value="shipping">Đang giao hàng</option>
+                <option value="delivered">Đã giao thành công</option>
+                <option value="cancelled">Đã hủy</option>
+              </select>
+              <select id="adminOrderPaymentFilter" class="form-input" onchange="loadAdminOrders()">
+                <option value="">-- Tất cả phương thức --</option>
+                <option value="cod">💵 Tiền mặt (COD)</option>
+                <option value="qr_transfer">📲 Chuyển khoản (VietQR)</option>
+                <option value="visa">💳 Thẻ quốc tế (Visa/Master)</option>
+              </select>
+              <button class="btn btn-outline" style="padding: 10px 16px;" onclick="loadAdminOrders()">Lọc</button>
+            </div>
+          </div>
+
+          <!-- Bảng Đơn Hàng Toàn Diện -->
+          <div class="data-table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Mã đơn</th>
+                  <th>Ngày đặt</th>
+                  <th>Khách hàng & SĐT</th>
+                  <th>Địa chỉ giao</th>
+                  <th>Phương thức</th>
+                  <th>Tổng tiền</th>
+                  <th>Trạng thái đơn</th>
+                  <th style="text-align: center;">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="adminFullOrdersTableBody">
+                <tr>
+                  <td colspan="8" style="text-align: center; padding: 30px;">Đang tải danh sách đơn hàng từ CSDL
+                    XAMPP...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========================================================
+       5. MODALS & DRAWERS
+       ======================================================== -->
+
+  <!-- PRODUCT DETAIL MODAL -->
+  <div class="modal-overlay" id="productDetailModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Thông Tin Chi Tiết Sản Phẩm</h3>
+        <button class="modal-close-btn" onclick="closeModal('productDetailModal')">✕</button>
+      </div>
+      <div class="modal-body" id="productDetailBody"></div>
+    </div>
+  </div>
+
+  <!-- CART SLIDE-IN DRAWER -->
+  <div class="cart-drawer" id="cartDrawer">
+    <div class="cart-header">
+      <h3 class="font-serif" style="font-size: 1.3rem;">Giỏ Hàng Của Bạn</h3>
+      <button class="modal-close-btn" onclick="closeCartDrawer()">✕</button>
+    </div>
+    <div class="cart-items-list" id="cartItemsList"></div>
+    <div class="cart-footer">
+      <div class="cart-total-row">
+        <span>Tạm tính:</span>
+        <span id="cartDrawerSubtotal" class="text-gold">0 đ</span>
+      </div>
+      <button class="btn btn-gold btn-block" onclick="openCheckoutModal()">
+        Tiến Hành Đặt Hàng →
+      </button>
+    </div>
+  </div>
+
+  <!-- CHECKOUT MODAL -->
+  <div class="modal-overlay" id="checkoutModal">
+    <div class="modal-card" style="max-width: 680px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Thanh Toán & Đặt Hàng</h3>
+        <button class="modal-close-btn" onclick="closeModal('checkoutModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="checkoutForm">
+          <h4 style="margin-bottom: 12px; color: var(--wood-800);">1. Thông Tin Nhận Hàng</h4>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label">Họ và tên người nhận *</label>
+              <input type="text" class="form-input" id="checkoutFullName" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label">Số điện thoại *</label>
+              <input type="tel" class="form-input" id="checkoutPhone" required>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label">Tỉnh / Thành phố *</label>
+              <input type="text" class="form-input" id="checkoutProvince" placeholder="vd: Hà Nội, TP.HCM" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label">Quận / Huyện *</label>
+              <input type="text" class="form-input" id="checkoutDistrict" placeholder="vd: Quận 1" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label">Phường / Xã *</label>
+              <input type="text" class="form-input" id="checkoutWard" placeholder="vd: Bến Nghé" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Địa chỉ chi tiết (Số nhà, tên đường, tòa nhà) *</label>
+            <input type="text" class="form-input" id="checkoutDetail" placeholder="Số 45 Lê Duẩn, Chung cư Horizon..."
+              required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Ghi chú cho xưởng / thợ mộc giao hàng</label>
+            <textarea class="form-input" id="checkoutNote" rows="2"
+              placeholder="vd: Giao vào cuối tuần, nhà có thang máy..."></textarea>
+          </div>
+
+          <h4 style="margin: 20px 0 12px; color: var(--wood-800);">2. Phương Thức Thanh Toán</h4>
+          <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+            <label
+              style="display: flex; align-items: center; gap: 10px; padding: 12px 16px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer;">
+              <input type="radio" name="payment_method" value="cod" checked onchange="onPaymentMethodChange()">
+              <div>
+                <strong>💵 Thanh toán khi nhận hàng (COD)</strong>
+                <div class="text-muted" style="font-size: 0.8rem;">Kiểm tra sản phẩm đồ gỗ tại nhà và trả tiền mặt cho
+                  nhân viên giao hàng.</div>
+              </div>
+            </label>
+            <label
+              style="display: flex; align-items: center; gap: 10px; padding: 12px 16px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer;">
+              <input type="radio" name="payment_method" value="qr_transfer" onchange="onPaymentMethodChange()">
+              <div>
+                <strong>📱 Chuyển khoản qua mã VietQR (Napas 247)</strong>
+                <div class="text-muted" style="font-size: 0.8rem;">Quét mã QR tự động điền số tài khoản, số tiền và nội
+                  dung chuyển khoản.</div>
+              </div>
+            </label>
+            <label
+              style="display: flex; align-items: center; gap: 10px; padding: 12px 16px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer;">
+              <input type="radio" name="payment_method" value="visa" onchange="onPaymentMethodChange()">
+              <div>
+                <strong>💳 Thẻ quốc tế Visa / MasterCard</strong>
+                <div class="text-muted" style="font-size: 0.8rem;">Cổng thanh toán bảo mật chuẩn 3D-Secure quốc tế.
+                </div>
+              </div>
+            </label>
+          </div>
+
+          <div id="qrNoticeBox"
+            style="display: none; background: #fff8e6; padding: 14px; border-radius: 8px; border: 1px solid #fae19c; margin-bottom: 20px; font-size: 0.85rem;">
+            ℹ️ Sau khi nhấn nút Đặt Hàng, màn hình sẽ hiển thị mã VietQR chính xác để bạn dùng app ngân hàng quét thanh
+            toán.
+          </div>
+
+          <div id="visaCardForm" style="display: none;"></div>
+
+          <h4 style="margin: 20px 0 12px; color: var(--wood-800);">3. Mã Giảm Giá & Tổng Kết</h4>
+          <div style="display: flex; gap: 10px; margin-bottom: 18px;">
+            <input type="text" class="form-input" id="checkoutPromoInput"
+              placeholder="Nhập mã (vd: WELCOME10, FREESHIP, WOOD200K)">
+            <button type="button" class="btn btn-outline" onclick="applyPromoCode()">Áp Dụng</button>
+          </div>
+
+          <div
+            style="background: var(--wood-50); padding: 16px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem; line-height: 1.8;">
+            <div style="display: flex; justify-content: space-between;"><span>Tạm tính hàng hóa:</span><span
+                id="checkoutSubtotal">0 đ</span></div>
+            <div style="display: flex; justify-content: space-between; color: var(--danger);"><span>Giảm giá khuyến
+                mãi:</span><span id="checkoutDiscount">-0 đ</span></div>
+            <div style="display: flex; justify-content: space-between;"><span>Phí vận chuyển & lắp đặt:</span><span
+                id="checkoutShipping">Miễn phí</span></div>
+            <div
+              style="display: flex; justify-content: space-between; font-weight: 700; font-size: 1.2rem; color: var(--wood-900); margin-top: 8px; border-top: 1px dashed var(--border); padding-top: 8px;">
+              <span>Tổng thanh toán:</span>
+              <span id="checkoutFinalTotal" class="text-gold">0 đ</span>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block" style="padding: 14px;">
+            Xác Nhận Đặt Hàng Ngay
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIETQR PAYMENT MODAL -->
+  <div class="modal-overlay" id="vietQRModal">
+    <div class="modal-card" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Quét Mã VietQR Thanh Toán</h3>
+        <button class="modal-close-btn" onclick="closeModal('vietQRModal')">✕</button>
+      </div>
+      <div class="modal-body" id="vietQRModalBody"></div>
+    </div>
+  </div>
+
+  <!-- VISA 3D SECURE PAYMENT MODAL -->
+  <div class="modal-overlay" id="visaPaymentModal">
+    <div class="modal-card" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Cổng Thanh Toán Thẻ Visa / MasterCard</h3>
+        <button class="modal-close-btn" onclick="closeModal('visaPaymentModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="visa-card-preview">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <span style="font-weight: 700; font-size: 1.1rem; letter-spacing: 1px;">WOODHOME PREMIUM</span>
+            <span style="font-weight: 700; font-style: italic; font-size: 1.3rem;">VISA</span>
+          </div>
+          <div class="visa-chip"></div>
+          <div class="visa-number-display" id="visaCardNumberDisplay">•••• •••• •••• ••••</div>
+          <div class="visa-meta-row">
+            <div>
+              <div style="font-size: 0.65rem; opacity: 0.7;">CARD HOLDER</div>
+              <div id="visaHolderDisplay" style="font-weight: 600;">KHACH HANG</div>
+            </div>
+            <div>
+              <div style="font-size: 0.65rem; opacity: 0.7;">EXPIRES</div>
+              <div id="visaExpiryDisplay" style="font-weight: 600;">12/28</div>
+            </div>
+          </div>
+        </div>
+
+        <form id="visaPaymentForm">
+          <div class="form-group">
+            <label class="form-label">Số thẻ Visa / MasterCard *</label>
+            <input type="text" class="form-input" id="visaCardNumber" placeholder="4111 2222 3333 4444" maxlength="19"
+              required
+              oninput="document.getElementById('visaCardNumberDisplay').textContent = this.value || '•••• •••• •••• ••••'">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tên in trên thẻ (không dấu) *</label>
+            <input type="text" class="form-input" id="visaCardHolder" placeholder="NGUYEN VAN A" required
+              oninput="document.getElementById('visaHolderDisplay').textContent = (this.value || 'KHACH HANG').toUpperCase()">
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+            <div class="form-group">
+              <label class="form-label">Hạn thẻ (MM/YY) *</label>
+              <input type="text" class="form-input" id="visaExpiry" placeholder="12/28" maxlength="5" required
+                oninput="document.getElementById('visaExpiryDisplay').textContent = this.value || '12/28'">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Mã CVV/CVC *</label>
+              <input type="password" class="form-input" id="visaCvv" placeholder="•••" maxlength="4" required>
+            </div>
+          </div>
+          <div style="text-align: center; margin-bottom: 18px; font-size: 0.9rem;">
+            Số tiền thanh toán: <strong class="text-gold" id="visaAmountDisplay">0 đ</strong>
+          </div>
+          <button type="submit" class="btn btn-gold btn-block">
+            🔒 Xác Nhận & Thanh Toán 3D-Secure
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORDER DETAIL & TRACKING MODAL -->
+  <div class="modal-overlay" id="orderDetailModal">
+    <div class="modal-card" style="max-width: 600px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Chi Tiết & Tiến Độ Đơn Hàng</h3>
+        <button class="modal-close-btn" onclick="closeModal('orderDetailModal')">✕</button>
+      </div>
+      <div class="modal-body" id="orderDetailBody"></div>
+    </div>
+  </div>
+
+  <!-- ORDER SUCCESS MODAL -->
+  <div class="modal-overlay" id="orderSuccessModal">
+    <div class="modal-card" style="max-width: 480px; text-align: center;">
+      <div class="modal-body" style="padding: 40px 24px;">
+        <div style="font-size: 3.5rem; margin-bottom: 16px;">🎉</div>
+        <h2 class="font-serif" style="font-size: 1.6rem; color: var(--wood-900); margin-bottom: 8px;">Đặt Hàng Thành
+          Công!</h2>
+        <p class="text-muted" style="margin-bottom: 20px;">Cảm ơn quý khách đã tin tưởng và lựa chọn sản phẩm nội thất
+          WoodHome.</p>
+        <div
+          style="background: var(--wood-50); padding: 16px; border-radius: 8px; margin-bottom: 24px; text-align: left; font-size: 0.9rem; line-height: 1.8;">
+          <div>Mã đơn hàng: <strong id="successOrderNumber" class="text-gold">#WH...</strong></div>
+          <div>Tổng thanh toán: <strong id="successOrderTotal">0 đ</strong></div>
+          <div>Phương thức: <span>Thanh toán tiền mặt khi nhận hàng (COD)</span></div>
+        </div>
+        <button class="btn btn-primary btn-block" onclick="closeModal('orderSuccessModal'); switchMainView('orders');">
+          Theo Dõi Trạng Thái Đơn Hàng
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORGOT PASSWORD MODAL (3 BƯỚC THEO PRD) -->
+  <div class="modal-overlay" id="forgotModal">
+    <div class="modal-card" style="max-width: 460px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Khôi Phục Mật Khẩu</h3>
+        <button class="modal-close-btn" onclick="closeModal('forgotModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <!-- Bước 1 -->
+        <form id="forgotStep1">
+          <p class="text-muted" style="font-size: 0.88rem; margin-bottom: 18px;">
+            Bước 1/3: Nhập email hoặc số điện thoại đã đăng ký để tìm tài khoản của bạn.
+          </p>
+          <div class="form-group">
+            <label class="form-label">Email hoặc Số điện thoại</label>
+            <input type="text" class="form-input" id="forgotIdentifier" placeholder="vd: khachhang@gmail.com" required>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Tiếp Tục</button>
+          <div style="text-align: center; margin-top: 14px;">
+            <a href="javascript:void(0)" onclick="closeModal('forgotModal')" class="text-muted"
+              style="font-size: 0.88rem; text-decoration: underline;">← Quay lại đăng nhập</a>
+          </div>
+        </form>
+
+        <!-- Bước 2 -->
+        <form id="forgotStep2" style="display: none;">
+          <p class="text-muted" style="font-size: 0.88rem; margin-bottom: 18px;">
+            Bước 2/3: Trả lời chính xác câu hỏi bảo mật bạn đã thiết lập khi đăng ký.
+          </p>
+          <div class="form-group">
+            <label class="form-label">Câu hỏi bảo mật</label>
+            <select class="form-input" id="forgotQuestionsSelect"></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Câu trả lời của bạn *</label>
+            <input type="text" class="form-input" id="forgotAnswer" placeholder="Nhập câu trả lời" required>
+          </div>
+          <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button type="button" class="btn btn-outline" style="flex: 1;" onclick="goToForgotStep(1)">← Quay
+              lại</button>
+            <button type="submit" class="btn btn-primary" style="flex: 2;">Xác Minh Danh Tính</button>
+          </div>
+        </form>
+
+        <!-- Bước 3 -->
+        <form id="forgotStep3" style="display: none;">
+          <p class="text-muted" style="font-size: 0.88rem; margin-bottom: 18px;">
+            Bước 3/3: Thiết lập mật khẩu mới (tối thiểu 8 ký tự).
+          </p>
+          <div class="form-group">
+            <label class="form-label">Mật khẩu mới *</label>
+            <div class="form-input-wrap">
+              <input type="password" class="form-input" id="forgotNewPassword" placeholder="••••••••" required>
+              <button type="button" class="form-toggle-pwd"
+                onclick="togglePasswordVisibility('forgotNewPassword', this)">👁</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Xác nhận mật khẩu mới *</label>
+            <div class="form-input-wrap">
+              <input type="password" class="form-input" id="forgotConfirmPassword" placeholder="••••••••" required>
+              <button type="button" class="form-toggle-pwd"
+                onclick="togglePasswordVisibility('forgotConfirmPassword', this)">👁</button>
+            </div>
+          </div>
+          <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button type="button" class="btn btn-outline" style="flex: 1;" onclick="goToForgotStep(2)">← Quay
+              lại</button>
+            <button type="submit" class="btn btn-gold" style="flex: 2;">Đổi Mật Khẩu Mới</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN PRODUCT MODAL (THÊM / SỬA SẢN PHẨM) -->
+  <div class="modal-overlay" id="adminProductModal">
+    <div class="modal-card" style="max-width: 680px; max-height: 90vh; overflow-y: auto;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="adminProductModalTitle">Thêm Sản Phẩm Mới</h3>
+        <button class="modal-close-btn" onclick="closeModal('adminProductModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="adminProductForm" onsubmit="handleSaveProduct(event)">
+          <input type="hidden" id="adminProductFormId" value="">
+
+          <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px;">
+            <div class="form-group">
+              <label class="form-label">Tên sản phẩm *</label>
+              <input type="text" class="form-input" id="adminProductFormName"
+                placeholder="vd: Bàn Ăn Gỗ Sồi Hoàng Gia 6 Ghế" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Danh mục *</label>
+              <select class="form-input" id="adminProductFormCategory" required></select>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+            <div class="form-group">
+              <label class="form-label">Giá niêm yết (VNĐ) *</label>
+              <input type="number" class="form-input" id="adminProductFormPrice" placeholder="15000000" min="0"
+                required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Giá khuyến mãi (VNĐ)</label>
+              <input type="number" class="form-input" id="adminProductFormSalePrice"
+                placeholder="Để trống nếu không giảm" min="0">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Số lượng tồn kho *</label>
+              <input type="number" class="form-input" id="adminProductFormStock" placeholder="10" min="0" required>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-group">
+              <label class="form-label">Mã SKU (tự sinh nếu để trống)</label>
+              <input type="text" class="form-input" id="adminProductFormSku" placeholder="vd: WH-BA-01">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Bảo hành (tháng)</label>
+              <input type="number" class="form-input" id="adminProductFormWarranty" value="12" min="0">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Hình ảnh sản phẩm (Tải lên hoặc nhập URL)</label>
+            <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+              <input type="url" class="form-input" id="adminProductFormImage"
+                placeholder="https://... hoặc tải tệp lên từ máy" oninput="updateProductImagePreview(this.value)">
+              <label class="btn btn-gold btn-sm"
+                style="white-space: nowrap; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+                📁 Tải ảnh
+                <input type="file" id="adminProductFileInput" accept="image/*" style="display: none;"
+                  onchange="handleProductFileUpload(this)">
+              </label>
+              <button type="button" class="btn btn-outline btn-sm" style="white-space: nowrap;"
+                onclick="chooseSampleImage()">Ảnh mẫu</button>
+            </div>
+            <div id="adminProductDropzone" class="upload-dropzone"
+              style="display: flex; align-items: center; gap: 12px; text-align: left;"
+              onclick="document.getElementById('adminProductFileInput').click()">
+              <img id="adminProductImagePreview" src="/images/banner1.jpg" alt="Preview" class="product-thumb-preview"
+                style="width: 48px; height: 48px; border-radius: 6px;">
+              <div style="flex: 1;">
+                <div style="font-weight: 600; font-size: 0.8rem; color: var(--wood-900);" id="uploadStatusText">Nhấp
+                  hoặc kéo thả tệp ảnh vào đây để tải lên</div>
+                <div class="text-muted" style="font-size: 0.72rem;">Hỗ trợ JPG, PNG, WEBP tối đa 5MB. Tự động lưu vào
+                  /uploads của hệ thống</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+            <div class="form-group">
+              <label class="form-label">Chất liệu gỗ</label>
+              <input type="text" class="form-input" id="adminProductFormMaterial"
+                placeholder="vd: Gỗ sồi Nga, Óc chó...">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Kích thước</label>
+              <input type="text" class="form-input" id="adminProductFormDimensions" placeholder="vd: 180 x 85 x 75 cm">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Màu sắc</label>
+              <input type="text" class="form-input" id="adminProductFormColor"
+                placeholder="vd: Nâu tự nhiên, Hạt dẻ...">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Mô tả ngắn</label>
+            <input type="text" class="form-input" id="adminProductFormShortDesc"
+              placeholder="Tóm tắt điểm nhấn nổi bật của sản phẩm">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Mô tả chi tiết</label>
+            <textarea class="form-input" id="adminProductFormDesc" rows="3"
+              placeholder="Mô tả kỹ thuật, vân gỗ, phong cách nội thất..."></textarea>
+          </div>
+
+          <div style="display: flex; gap: 24px; margin-bottom: 20px;">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.9rem;">
+              <input type="checkbox" id="adminProductFormFeatured">
+              ⭐ Đánh dấu là sản phẩm nổi bật
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.9rem;">
+              <input type="checkbox" id="adminProductFormActive" checked>
+              ✅ Hiển thị đang kinh doanh
+            </label>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 12px;">
+            <button type="button" class="btn btn-outline" onclick="closeModal('adminProductModal')">Hủy</button>
+            <button type="submit" class="btn btn-gold" id="adminProductSaveBtn">Lưu Sản Phẩm</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN DELETE PRODUCT CONFIRMATION MODAL -->
+  <div class="modal-overlay" id="adminDeleteModal">
+    <div class="modal-card" style="max-width: 460px; text-align: center;">
+      <div class="modal-header">
+        <h3 class="modal-title" style="color: #dc2626;">⚠️ Xác Nhận Xóa Sản Phẩm</h3>
+        <button class="modal-close-btn" onclick="closeModal('adminDeleteModal')">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 24px;">
+        <div style="font-size: 3rem; margin-bottom: 12px;">🗑️</div>
+        <p style="font-size: 1rem; color: var(--wood-900); font-weight: 600; margin-bottom: 8px;"
+          id="adminDeleteProductName">
+          Bạn có chắc chắn muốn xóa sản phẩm này?
+        </p>
+        <p class="text-muted" style="font-size: 0.85rem; line-height: 1.6; margin-bottom: 24px;">
+          Lưu ý: Nếu sản phẩm chưa có đơn hàng, hệ thống sẽ xóa vĩnh viễn khỏi CSDL MySQL. Nếu đã có đơn hàng, hệ thống
+          sẽ tự động ẩn sản phẩm để bảo vệ toàn vẹn lịch sử hóa đơn.
+        </p>
+        <div style="display: flex; gap: 12px; justify-content: center;">
+          <button class="btn btn-outline" style="min-width: 120px;" onclick="closeModal('adminDeleteModal')">Hủy
+            bỏ</button>
+          <button class="btn btn-danger" style="min-width: 140px; background: #dc2626; color: #fff;"
+            id="adminConfirmDeleteBtn">Xác Nhận Xóa</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- ========================================================
+       6. SITE FOOTER
+       ======================================================== -->
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-col">
+        <h4 style="font-size: 1.4rem; letter-spacing: 1px;">🌲 WOOD<span class="text-gold">HOME</span></h4>
+        <p style="font-size: 0.88rem; line-height: 1.7; margin-bottom: 16px;">
+          Thương hiệu nội thất đồ gỗ cao cấp. Tôn vinh vẻ đẹp tự nhiên của từng đường vân gỗ, kiến tạo không gian sống
+          sang trọng, ấm cúng và trường tồn với thời gian.
+        </p>
+        <div style="font-size: 0.85rem;">
+          📍 Showroom: 108 Nguyễn Huệ, Phường Bến Nghé, Quận 1, TP.HCM<br>
+          📞 Hotline tư vấn: 1900 8888 (8:00 - 21:00 hàng ngày)
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Về WoodHome</h4>
+        <ul class="footer-links">
+          <li><a href="#products">Bộ sưu tập 2026</a></li>
+          <li><a href="javascript:void(0)">Câu chuyện thương hiệu</a></li>
+          <li><a href="javascript:void(0)">Quy trình tẩm sấy gỗ</a></li>
+          <li><a href="javascript:void(0)">Chứng nhận nguồn gốc gỗ</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Chính Sách & Hỗ Trợ</h4>
+        <ul class="footer-links">
+          <li><a href="javascript:void(0)">Chính sách bảo hành 5 năm</a></li>
+          <li><a href="javascript:void(0)">Đổi trả & Hoàn tiền trong 30 ngày</a></li>
+          <li><a href="javascript:void(0)">Vận chuyển & Lắp đặt tận nơi</a></li>
+          <li><a href="javascript:void(0)">Hướng dẫn bảo dưỡng đồ gỗ</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Phương Thức Thanh Toán</h4>
+        <p style="font-size: 0.85rem; margin-bottom: 12px;">Hỗ trợ đa dạng cổng thanh toán tiện lợi và an toàn:</p>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <span class="badge badge-gold">VietQR Napas 247</span>
+          <span class="badge badge-wood">COD Tiền Mặt</span>
+          <span class="badge badge-info">Visa / MasterCard</span>
+        </div>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      © 2026 WoodHome E-Commerce. Thiết kế và phát triển đáp ứng đầy đủ yêu cầu theo Đặc tả PRD Backend Nâng Cao.
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/js/hooks.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+
+</html>
