@@ -1,4 +1,4 @@
-const { v4: uuidv4 } = require('uuid');
+const { randomUUID } = require('crypto');
 const db = require('../config/database');
 
 // Tạo mã đơn hàng
@@ -145,7 +145,7 @@ const createOrder = async (req, res) => {
     await conn.query('INSERT INTO order_status_history (order_id, status, note) VALUES (?, ?, ?)', [orderId, 'pending', 'Đơn hàng được tạo']);
 
     // Tạo giao dịch
-    const transactionRef = `TXN-${uuidv4().slice(0, 8).toUpperCase()}`;
+    const transactionRef = `TXN-${randomUUID().replace(/-/g, '').slice(0, 8).toUpperCase()}`;
     await conn.query(
       'INSERT INTO transactions (order_id, transaction_ref, payment_method, amount) VALUES (?, ?, ?, ?)',
       [orderId, transactionRef, payment_method, totalAmount]

@@ -12,7 +12,13 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "keywords": ["ecommerce", "furniture", "woodhome", "nodejs", "express"],
+  "keywords": [
+    "ecommerce",
+    "furniture",
+    "woodhome",
+    "nodejs",
+    "express"
+  ],
   "author": "WoodHome Team",
   "license": "ISC",
   "type": "commonjs",
@@ -29,7 +35,6 @@
     "morgan": "^1.12.1",
     "multer": "^2.4.0",
     "mysql2": "^3.24.5",
-    "nodemailer": "^10.1.0",
-    "uuid": "^14.0.3"
+    "nodemailer": "^10.1.0"
   }
 }
