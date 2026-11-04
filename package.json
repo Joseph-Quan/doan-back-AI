@@ -2,12 +2,15 @@
   "name": "doan-back",
   "version": "1.0.0",
   "description": "WoodHome E-Commerce Backend - Nội thất gỗ tự nhiên cao cấp",
-  "main": "src/server.js",
+  "main": "src/server.ts",
   "scripts": {
-    "start": "node src/server.js",
-    "dev": "node src/server.js",
-    "init-db": "node src/utils/initDb.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "tsx src/server.ts",
+    "dev": "tsx watch src/server.ts",
+    "build": "vite build",
+    "build:server": "tsc",
+    "dev:client": "vite",
+    "init-db": "tsx src/utils/initDb.ts",
+    "test": "npm run build:server && npm run build"
   },
   "engines": {
     "node": ">=18.0.0"
@@ -23,6 +26,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@types/leaflet": "^1.9.22",
     "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
@@ -32,9 +36,27 @@
     "express-validator": "^7.3.2",
     "helmet": "^8.3.0",
     "jsonwebtoken": "^9.0.3",
+    "leaflet": "^1.9.4",
     "morgan": "^1.12.1",
     "multer": "^2.4.0",
     "mysql2": "^3.24.5",
-    "nodemailer": "^10.1.0"
+    "nodemailer": "^10.1.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-router-dom": "^7.18.4"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cookie-parser": "^1.4.10",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/morgan": "^1.9.10",
+    "@types/multer": "^2.3.0",
+    "@types/node": "^26.6.5",
+    "@vitejs/plugin-react": "^6.1.2",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.4"
   }
 }

@@ -37,12 +37,23 @@ WoodHome là nền tảng thương mại điện tử chuyên kinh doanh nội t
 ### 2.4. Đa Dạng Phương Thức Thanh Toán
 1. **COD (Tiền mặt khi nhận hàng)**
 2. **VietQR (Napas 247):** Tự động sinh mã QR ngân hàng chuẩn Napas 247.
+   QR lấy động từ cấu hình ngân hàng phía server; khách chỉ gửi yêu cầu đối soát, admin mới xác nhận đã nhận tiền.
 3. **Thẻ Visa / MasterCard:** Giao diện thẻ trực quan sang trọng.
+   Endpoint mô phỏng Visa bị khóa mặc định (`PAYMENT_DEMO_MODE=false`); production cần tích hợp PSP có webhook/chữ ký.
 
 ### 2.5. Trang Quản Trị Hệ Thống (Admin Portal)
 - **Dashboard phân tích:** Doanh thu hôm nay, doanh thu tháng, số lượng đơn hàng.
 - **Doanh thu chỉ tính khi `status = 'delivered'`** (đơn hàng bị hủy `cancelled` không được tính).
 - **Quản lý đơn hàng:** Xem chi tiết và cập nhật trạng thái trực tiếp.
+- **Giao diện riêng:** Truy cập `/admin.html`; hệ thống kiểm tra quyền staff/admin trước khi hiển thị dữ liệu.
+
+### 2.6. Trang Chi Tiết & Trợ Lý AI
+- Mỗi sản phẩm mở tại `/product.html?slug=<slug>` với ảnh, thông số, đánh giá và sản phẩm liên quan.
+- Nút AI ở góc cửa hàng gọi `POST /api/ai/chat`.
+- Khách hàng đăng nhập sẽ tạo hội thoại; chỉ tài khoản nhân viên bán hàng mới truy cập `/support.html` để tiếp nhận và trả lời.
+- Khu vực `/admin.html` quản lý dashboard và phân quyền ba vai trò: khách hàng, nhân viên bán hàng, admin.
+- Hội thoại hiện được lưu trong bộ nhớ tiến trình; cần thêm bảng persistence nếu triển khai nhiều instance hoặc cần lưu lịch sử lâu dài.
+- Không cấu hình khóa AI, hệ thống dùng fallback tư vấn nội thất. Để bật provider OpenAI-compatible, thêm `OPENAI_API_KEY`, tùy chọn `OPENAI_API_URL` và `OPENAI_MODEL` vào `.env`.
 
 ---
 
@@ -63,6 +74,7 @@ WoodHome là nền tảng thương mại điện tử chuyên kinh doanh nội t
 | :--- | :--- | :--- | :--- |
 | **Quản trị viên (Admin)** | `admin@woodhome.vn` | `Admin@123` | Toàn quyền Dashboard, đơn hàng, kho, doanh thu |
 | **Nhân viên bán hàng** | `staff@woodhome.vn` | `Admin@123` | Xử lý đơn hàng, cập nhật vận chuyển |
+| **Nhân viên kho** | *(tài khoản do Admin cấp role 3)* | — | Xem và điều chỉnh tồn kho |
 | **Khách hàng** | `khachhang@gmail.com` | `Admin@123` | Mua hàng, giỏ hàng, VietQR, theo dõi đơn |
 
 *(Tại màn hình đăng nhập, bạn có thể click vào các nút "⚡ Tài khoản mẫu" để điền tự động).*
