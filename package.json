@@ -6,7 +6,7 @@
   "scripts": {
     "start": "tsx src/server.ts",
     "dev": "tsx watch src/server.ts",
-    "build": "vite build",
+    "build": "npm run build:server && vite build",
     "build:server": "tsc",
     "dev:client": "vite",
     "init-db": "tsx src/utils/initDb.ts",
@@ -43,7 +43,8 @@
     "nodemailer": "^10.1.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "react-router-dom": "^7.18.4"
+    "react-router-dom": "^7.18.4",
+    "@types/node": "^26.6.5"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
@@ -53,7 +54,6 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/morgan": "^1.9.10",
     "@types/multer": "^2.3.0",
-    "@types/node": "^26.6.5",
     "@vitejs/plugin-react": "^6.1.2",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2",
