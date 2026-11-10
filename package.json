@@ -7,7 +7,8 @@
     "start": "tsx src/server.ts",
     "dev": "tsx watch src/server.ts",
     "build": "npm run build:server && vite build",
-    "build:server": "tsc",
+    "build:server": "tsc --project tsconfig.json",
+    "build:vercel": "npm run build:server && vite build",
     "dev:client": "vite",
     "init-db": "tsx src/utils/initDb.ts",
     "test": "npm run build:server && npm run build"
