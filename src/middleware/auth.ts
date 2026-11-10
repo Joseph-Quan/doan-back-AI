@@ -4,6 +4,8 @@ import { AuthUser } from '../types';
 
 const db = require('../config/database');
 
+const JWT_SECRET = process.env.JWT_SECRET || 'woodhome_super_secret_jwt_key_2026_furniture_ecommerce_secure_auth_token';
+
 // Xác thực JWT token
 const authenticate = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -16,7 +18,7 @@ const authenticate = async (req: Request, res: Response, next: NextFunction): Pr
       return;
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { userId: number };
+    const decoded = jwt.verify(token, JWT_SECRET) as { userId: number };
     
     const [users]: [AuthUser[], any] = await db.query(
       'SELECT id, email, full_name, role_id, is_active FROM users WHERE id = ?',
@@ -47,7 +49,7 @@ const optionalAuth = async (req: Request, res: Response, next: NextFunction): Pr
     const token = authHeader?.replace('Bearer ', '') || cookieToken;
     if (!token) { next(); return; }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { userId: number };
+    const decoded = jwt.verify(token, JWT_SECRET) as { userId: number };
     const [users]: [AuthUser[], any] = await db.query(
       'SELECT id, email, full_name, role_id, is_active FROM users WHERE id = ?',
       [decoded.userId]

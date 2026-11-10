@@ -5,8 +5,26 @@ import { authenticate } from '../middleware/auth';
 
 const router: Router = express.Router();
 
-const loginLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 10, message: { success: false, message: 'Quá nhiều lần thử. Vui lòng thử lại sau 15 phút.' } });
-const forgotLimiter = rateLimit({ windowMs: 60 * 60 * 1000, max: 5, message: { success: false, message: 'Quá nhiều yêu cầu. Thử lại sau 1 giờ.' } });
+const isVercel = !!process.env.VERCEL;
+
+// Trên Vercel serverless, nới lỏng rate limit để tránh false-positive IP blocking
+const loginLimiter = isVercel
+  ? (_req: any, _res: any, next: any) => next()
+  : rateLimit({
+      windowMs: 15 * 60 * 1000,
+      max: 30,
+      validate: { trustProxy: false },
+      message: { success: false, message: 'Quá nhiều lần thử. Vui lòng thử lại sau 15 phút.' }
+    });
+
+const forgotLimiter = isVercel
+  ? (_req: any, _res: any, next: any) => next()
+  : rateLimit({
+      windowMs: 60 * 60 * 1000,
+      max: 15,
+      validate: { trustProxy: false },
+      message: { success: false, message: 'Quá nhiều yêu cầu. Thử lại sau 1 giờ.' }
+    });
 
 router.post('/register', register);
 router.post('/login', loginLimiter, login);

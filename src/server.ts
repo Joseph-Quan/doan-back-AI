@@ -15,6 +15,9 @@ const apiRouter = require('./routes');
 const app: Application = express();
 const PORT: number = parseInt(process.env.PORT || '3000', 10);
 
+// Tin tưởng reverse proxy (cần thiết cho Vercel & Express rate limiter)
+app.set('trust proxy', 1);
+
 // Security Middlewares
 app.use(helmet({
   contentSecurityPolicy: false, // Cho phép load fonts Google, CDN icons, ảnh Unsplash & VietQR

@@ -6,6 +6,8 @@ import { AuthUser } from '../types';
 
 const db = require('../config/database');
 
+const JWT_SECRET = process.env.JWT_SECRET || 'woodhome_super_secret_jwt_key_2026_furniture_ecommerce_secure_auth_token';
+
 
 // POST /api/auth/register
 const register = async (req: Request, res: Response): Promise<any> => {
@@ -50,7 +52,7 @@ const register = async (req: Request, res: Response): Promise<any> => {
 
     await conn.commit();
 
-    const token = jwt.sign({ userId }, process.env.JWT_SECRET || '', {
+    const token = jwt.sign({ userId }, JWT_SECRET, {
       expiresIn: (process.env.JWT_EXPIRES_IN || '7d') as any
     });
 
@@ -100,7 +102,7 @@ const login = async (req: Request, res: Response): Promise<any> => {
     // Cập nhật last_login
     await db.query('UPDATE users SET last_login = NOW() WHERE id = ?', [user.id]);
 
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET || '', {
+    const token = jwt.sign({ userId: user.id }, JWT_SECRET, {
       expiresIn: (process.env.JWT_EXPIRES_IN || '7d') as any
     });
 
