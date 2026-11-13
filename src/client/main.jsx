@@ -1588,6 +1588,7 @@ function AdminPage() {
                       <select className="form-input" value={u.role_id} onChange={e => roleChange(u.id, e.target.value)}>
                         <option value="1">Khách hàng</option>
                         <option value="2">Nhân viên bán hàng</option>
+                        <option value="3">Nhân viên kho</option>
                         <option value="4">Admin</option>
                       </select>
                     </td>

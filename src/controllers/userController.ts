@@ -179,15 +179,21 @@ const adminUpdateUser = async (req: Request, res: Response): Promise<any> => {
   try {
     const { id } = req.params;
     const { role_id, is_active } = req.body;
+    const roleId = Number(role_id);
+    const isActive = is_active === true || Number(is_active) === 1 ? 1 : 0;
 
-    if (![1, 2, 4].includes(Number(role_id))) {
-      return res.status(400).json({ success: false, message: 'Vai trò chỉ gồm khách hàng, nhân viên bán hàng hoặc admin.' });
+    if (![1, 2, 3, 4].includes(roleId)) {
+      return res.status(400).json({ success: false, message: 'Vai trò không hợp lệ.' });
     }
 
     const old = await db.query('SELECT role_id, is_active FROM users WHERE id = ?', [id]);
-    await db.query('UPDATE users SET role_id = ?, is_active = ? WHERE id = ?', [role_id, is_active, id]);
+    if (!old[0].length) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy tài khoản.' });
+    }
+
+    await db.query('UPDATE users SET role_id = ?, is_active = ? WHERE id = ?', [roleId, isActive, id]);
     await db.query('INSERT INTO admin_logs (user_id, action, entity_type, entity_id, old_values, new_values) VALUES (?, ?, ?, ?, ?, ?)',
-      [req.user.id, 'update_user', 'user', id, JSON.stringify(old[0][0]), JSON.stringify({ role_id, is_active })]);
+      [req.user.id, 'update_user', 'user', id, JSON.stringify(old[0][0]), JSON.stringify({ role_id: roleId, is_active: isActive })]);
 
     res.json({ success: true, message: 'Cập nhật tài khoản thành công.' });
   } catch (err) {

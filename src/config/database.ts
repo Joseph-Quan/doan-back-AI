@@ -532,6 +532,80 @@ async function executeFallbackQuery(sql, params = []) {
     return [user ? [user] : []];
   }
 
+  // SELECT admin user list and count
+  if (lower.startsWith('select count(*) as c from users u where')) {
+    const hasRoleFilter = lower.includes('u.role_id = ?');
+    const hasSearch = lower.includes('like ?');
+    const roleFilter = hasRoleFilter ? Number(params[hasSearch ? 3 : 0]) : null;
+    const search = hasSearch ? String(params[0] || '').replace(/%/g, '').toLowerCase() : '';
+    const users = fallbackStore.users.filter(user => {
+      const matchesRole = roleFilter === null || user.role_id === roleFilter;
+      const haystack = `${user.email} ${user.full_name} ${user.phone || ''}`.toLowerCase();
+      return matchesRole && (!search || haystack.includes(search));
+    });
+    return [[{ c: users.length }]];
+  }
+
+  if (lower.includes('from users u join roles r on r.id = u.role_id')) {
+    const hasRoleFilter = lower.includes('u.role_id = ?');
+    const hasSearch = lower.includes('like ?');
+    const filterParamCount = (hasSearch ? 3 : 0) + (hasRoleFilter ? 1 : 0);
+    const limit = Number(params[filterParamCount]);
+    const offset = Number(params[filterParamCount + 1]);
+    const roleFilter = hasRoleFilter ? Number(params[hasSearch ? 3 : 0]) : null;
+    const search = hasSearch ? String(params[0] || '').replace(/%/g, '').toLowerCase() : '';
+    const users = fallbackStore.users
+      .filter(user => {
+        const matchesRole = roleFilter === null || user.role_id === roleFilter;
+        const haystack = `${user.email} ${user.full_name} ${user.phone || ''}`.toLowerCase();
+        return matchesRole && (!search || haystack.includes(search));
+      })
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      .slice(offset, offset + limit)
+      .map(user => ({
+        id: user.id,
+        email: user.email,
+        phone: user.phone,
+        full_name: user.full_name,
+        role_id: user.role_id,
+        is_active: user.is_active,
+        created_at: user.created_at,
+        last_login: user.last_login,
+        role_name: fallbackStore.roles.find(role => role.id === user.role_id)?.name || ''
+      }));
+    return [users];
+  }
+
+  // UPDATE admin user role/status
+  if (lower.startsWith('update users set role_id = ?, is_active = ? where id = ?')) {
+    const [roleId, isActive, id] = params;
+    const user = fallbackStore.users.find(item => item.id === Number(id));
+    if (!user) return [{ affectedRows: 0 }];
+    user.role_id = Number(roleId);
+    user.is_active = Number(isActive);
+    return [{ affectedRows: 1 }];
+  }
+
+  if (lower.startsWith('select role_id, is_active from users where id = ?')) {
+    const user = fallbackStore.users.find(item => item.id === Number(params[0]));
+    return [user ? [{ role_id: user.role_id, is_active: user.is_active }] : []];
+  }
+
+  if (lower.startsWith('insert into admin_logs')) {
+    const [userId, action, entityType, entityId, oldValues, newValues] = params;
+    fallbackStore.admin_logs.push({
+      id: fallbackStore.admin_logs.length + 1,
+      user_id: Number(userId),
+      action,
+      entity_type: entityType,
+      entity_id: Number(entityId),
+      old_values: oldValues,
+      new_values: newValues,
+      created_at: new Date()
+    });
+    return [{ affectedRows: 1, insertId: fallbackStore.admin_logs.length }];
+  }
+
   // UPDATE users last_login
   if (lower.startsWith('update users set last_login')) {
     const id = params[0];
