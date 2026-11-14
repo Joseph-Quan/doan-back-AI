@@ -146,7 +146,7 @@ export interface CartItem {
   user_id: number;
   product_id: number;
   quantity: number;
-  added_at: Date;
+  created_at: Date;
   updated_at: Date;
 }
 

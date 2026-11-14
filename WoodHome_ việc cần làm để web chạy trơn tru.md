@@ -81,4 +81,4 @@ Tiến độ được cập nhật trực tiếp theo từng nhóm công việc.
   - Tự động ghi vết các thao tác quản trị: thay đổi giá, sửa sản phẩm, đổi tài khoản ngân hàng QR, cập nhật trạng thái đơn hàng.
 
 - [x] **3.4. Cải tiến API Health Check & System Status (`/api/health`)**
-  - Bổ sung thông tin trạng thái cơ sở dữ liệu (MySQL / In-Memory Fallback), thời gian hoạt động (uptime) và phiên bản API.
+  - Bổ sung thông tin trạng thái cơ sở dữ liệu (Supabase PostgreSQL), thời gian hoạt động (uptime) và phiên bản API.

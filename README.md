@@ -59,10 +59,10 @@ WoodHome là nền tảng thương mại điện tử chuyên kinh doanh nội t
 
 ## 🛠️ 3. CÔNG NGHỆ SỬ DỤNG
 
-- **Backend:** Node.js 18+, Express.js (v5), MySQL2, JWT, Bcryptjs, Helmet, Cors, Multer
+- **Backend:** Node.js 18+, Express.js (v5), Supabase PostgreSQL, JWT, Bcryptjs, Helmet, Cors, Multer
 - **Database Engine:**
-  - Hỗ trợ kết nối **MySQL** chuẩn.
-  - Tích hợp sẵn **Smart In-Memory Database Fallback**: Tự động chuyển đổi nếu MySQL chưa bật.
+  - Sử dụng **Supabase PostgreSQL** làm cơ sở dữ liệu duy nhất.
+  - Schema nằm tại [`supabase/migrations/20261114000000_woodhome_schema.sql`](supabase/migrations/20261114000000_woodhome_schema.sql).
 - **Frontend:** Vanilla HTML5, CSS3 (Glassmorphism, Responsive), JavaScript ES6+
 - **Deploy:** Vercel (Serverless Functions)
 
@@ -96,14 +96,11 @@ npm start
 ```
 Ứng dụng sẽ chạy tại địa chỉ: **`http://localhost:3000`**
 
-### Bước 3 (Tùy chọn - Khi muốn dùng MySQL):
-1. Bật MySQL trên XAMPP / Laragon.
-2. Sao chép `.env.example` thành `.env` và điền thông tin database.
-3. Chạy lệnh tự động tạo bảng và nạp dữ liệu:
-   ```bash
-   npm run init-db
-   ```
-4. Khởi động lại server: `npm start`.
+### Bước 3: Cấu hình Supabase
+1. Mở Supabase Dashboard > SQL Editor và chạy file `supabase/migrations/20261114000000_woodhome_schema.sql`.
+2. Sao chép `.env.example` thành `.env`.
+3. Điền `SUPABASE_URL` và `SUPABASE_SERVICE_ROLE_KEY` cho backend; chỉ dùng `VITE_SUPABASE_PUBLISHABLE_KEY` ở frontend.
+4. Khởi động server: `npm start`.
 
 ---
 
@@ -121,10 +118,10 @@ npm start
    NODE_ENV=production
    JWT_SECRET=<your_random_secret_key>
    ```
-   *(Nếu có MySQL cloud, thêm thêm DB_HOST, DB_USER, DB_PASSWORD, DB_NAME)*
+   *(Không cần cấu hình MySQL.)*
 4. Click **Deploy**! Vercel sẽ tự động build và deploy.
 
-> **Lưu ý:** Khi không cấu hình MySQL, ứng dụng tự động dùng **In-Memory Database** với dữ liệu mẫu có sẵn - website vẫn hoạt động đầy đủ!
+> **Lưu ý:** Backend yêu cầu `SUPABASE_SERVICE_ROLE_KEY` để gọi RPC server-side. Không đưa key này vào frontend hoặc commit vào Git.
 
 ---
 
@@ -137,7 +134,7 @@ doan-back/
 ├── package.json              # Dependencies và scripts
 ├── src/
 │   ├── config/
-│   │   └── database.js       # Bộ kết nối MySQL & Fallback Engine
+│   │   └── database.ts       # Adapter truy vấn Supabase PostgreSQL
 │   ├── controllers/
 │   │   ├── authController.js
 │   │   ├── productController.js
@@ -155,7 +152,7 @@ doan-back/
 │   │   ├── payment.js, upload.js
 │   ├── utils/
 │   │   ├── vietqr.js         # Tạo URL VietQR Napas 247
-│   │   └── initDb.js         # Script tự động import database.sql
+│   │   └── vietqr.ts          # Tạo URL VietQR Napas 247
 │   └── server.js             # File khởi động chính
 └── public/
     ├── index.html            # Giao diện chính SPA

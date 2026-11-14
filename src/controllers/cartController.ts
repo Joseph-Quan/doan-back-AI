@@ -12,7 +12,7 @@ const getCart = async (req: Request, res: Response): Promise<any> => {
       FROM cart_items ci
       JOIN products p ON p.id = ci.product_id AND p.is_active = 1
       WHERE ci.user_id = ?
-      ORDER BY ci.added_at DESC
+      ORDER BY ci.created_at DESC
     `, [req.user.id]);
 
     const subtotal = items.reduce((sum, item) => {

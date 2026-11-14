@@ -99,9 +99,9 @@ const getDashboard = async (req: Request, res: Response): Promise<any> => {
     }));
 
     const db_status = {
-      is_mysql: !db.isFallbackMode(),
-      engine: db.isFallbackMode() ? 'In-Memory Mock DB' : 'MySQL Server trên XAMPP',
-      database_name: process.env.DB_NAME || 'woodhome'
+      is_mysql: false,
+      engine: db.engine(),
+      database_name: 'Supabase PostgreSQL'
     };
 
     res.json({

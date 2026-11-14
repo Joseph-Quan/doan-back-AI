@@ -50,7 +50,7 @@ app.get('/api/health', (req: Request, res: Response) => {
     timestamp: new Date(),
     uptime_seconds: Math.floor(process.uptime()),
     database: {
-      engine: db.isFallbackMode() ? 'In-Memory Smart Fallback' : 'MySQL Live Connection',
+      engine: db.engine(),
       mode: process.env.NODE_ENV || 'development'
     }
   });
