@@ -1,7 +1,7 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import 'dotenv/config';
 
-type QueryResult = [{ [key: string]: any }[], { affectedRows?: number; insertId?: number }];
+type QueryResult = [any, { affectedRows?: number; insertId?: number }];
 
 const supabaseUrl = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '').trim();
 const supabaseKey = (process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim();
@@ -55,8 +55,9 @@ function toPostgresSql(sql: string, params: unknown[] = []): string {
 }
 
 async function execute(sql: string, params: unknown[] = []): Promise<QueryResult> {
+  const statement = toPostgresSql(sql, params).trim();
   const { data, error } = await supabase.rpc('execute_sql', {
-    sql_query: toPostgresSql(sql, params).trim(),
+    sql_query: statement,
   });
 
   if (error) {
@@ -64,13 +65,13 @@ async function execute(sql: string, params: unknown[] = []): Promise<QueryResult
   }
 
   const result = data || { rows: [], affected_rows: 0, insert_id: null };
-  return [
-    Array.isArray(result.rows) ? result.rows : [],
-    {
-      affectedRows: Number(result.affected_rows || 0),
-      insertId: result.insert_id === null ? undefined : Number(result.insert_id),
-    },
-  ];
+  const metadata = {
+    affectedRows: Number(result.affected_rows || 0),
+    insertId: result.insert_id === null ? undefined : Number(result.insert_id),
+  };
+  const isMutation = /^(INSERT|UPDATE|DELETE)\b/i.test(statement);
+
+  return [isMutation ? metadata : (Array.isArray(result.rows) ? result.rows : []), metadata];
 }
 
 const dbProxy = {

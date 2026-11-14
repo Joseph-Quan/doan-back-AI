@@ -90,7 +90,7 @@ const createOrder = async (req: Request, res: Response): Promise<any> => {
           if (promo.type === 'percentage') {
             discount = subtotal * promo.value / 100;
             if (promo.max_discount_amount) discount = Math.min(discount, promo.max_discount_amount);
-          } else if (promo.type === 'fixed_amount') {
+          } else if (promo.type === 'fixed' || promo.type === 'fixed_amount') {
             discount = Math.min(promo.value, subtotal);
           }
         }
