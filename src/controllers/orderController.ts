@@ -594,9 +594,11 @@ const adminUpdateOrderStatus = async (req: Request, res: Response): Promise<any>
     }
 
     if (status === 'delivered') {
-      // Khi đã giao thành công: Đánh dấu trạng thái giao hàng, thời gian giao và thanh toán hoàn tất
+      // Khi đã giao thành công: Đánh dấu trạng thái giao hàng và thanh toán hoàn tất.
+      // Không ghi delivered_at ở đây vì đây là cột tùy chọn, có thể chưa có trong
+      // các database được tạo từ schema cũ.
       await db.query(
-        "UPDATE orders SET status = 'delivered', payment_status = 'paid', delivered_at = NOW(), updated_at = NOW() WHERE id = ?",
+        "UPDATE orders SET status = 'delivered', payment_status = 'paid', updated_at = NOW() WHERE id = ?",
         [id]
       );
     } else if (status === 'cancelled') {
@@ -644,6 +646,7 @@ const adminUpdateOrderStatus = async (req: Request, res: Response): Promise<any>
         : (status === 'cancelled' ? 'Đã hủy đơn hàng! Doanh thu đơn đã được loại khỏi thống kê.' : 'Cập nhật trạng thái đơn hàng thành công.')
     });
   } catch (err) {
+    console.error('Admin update order status error:', err);
     res.status(500).json({ success: false, message: 'Lỗi server.' });
   }
 };

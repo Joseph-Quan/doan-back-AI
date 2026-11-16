@@ -61,6 +61,20 @@
 .admin-cards { display:grid; grid-template-columns:repeat(4, 1fr); gap:14px; margin-bottom:20px; }
 .admin-stat { background:#fff; padding:18px; border-left:4px solid var(--gold-500); border-radius:6px; box-shadow:var(--shadow-sm); }
 .admin-stat small { color:var(--text-muted); } .admin-stat strong { display:block; font-size:1.4rem; margin-top:6px; }
+.revenue-charts { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:16px; margin-bottom:20px; }
+.revenue-chart-panel { background:#fff; padding:20px; border-radius:8px; box-shadow:var(--shadow-sm); min-width:0; }
+.revenue-chart-heading { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:14px; }
+.revenue-chart-heading h3 { color:var(--wood-900); font-size:1.15rem; margin:0 0 4px; }
+.revenue-chart-heading small { color:var(--text-muted); }
+.revenue-chart-heading strong { color:var(--wood-800); white-space:nowrap; }
+.revenue-chart-scroll { overflow-x:auto; }
+.revenue-chart { display:block; width:100%; min-width:500px; height:auto; overflow:visible; }
+.revenue-chart-grid { stroke:#eadfd5; stroke-width:1; stroke-dasharray:3 4; }
+.revenue-chart-axis, .revenue-chart-label { fill:var(--text-muted); font-size:11px; }
+.revenue-chart-area { fill:rgba(197,155,39,.16); }
+.revenue-chart-line { fill:none; stroke:var(--gold-500); stroke-width:3; stroke-linecap:round; stroke-linejoin:round; }
+.revenue-chart-point { fill:#fff; stroke:var(--gold-500); stroke-width:3; }
+.revenue-chart-empty { fill:var(--text-muted); font-size:13px; }
 .admin-product-img { width:48px; height:40px; object-fit:cover; border-radius:4px; }
 .admin-product-toolbar { display:flex; justify-content:flex-end; margin-bottom:14px; }
 .product-form { margin-bottom:16px; }
@@ -89,6 +103,7 @@
 .support-bubble small { display:block; color:var(--text-muted); font-size:.72rem; margin-bottom:3px; }
 .support-compose { display:flex; gap:10px; padding:12px; border-top:1px solid var(--border); }
 .support-compose input { flex:1; min-width:0; }
+@media (max-width: 1000px) { .revenue-charts { grid-template-columns:1fr; } }
 @media (max-width: 800px) { .admin-shell, .support-shell { grid-template-columns:1fr; } .admin-side, .support-list { padding:14px; } .admin-brand { margin-bottom:14px; } .admin-side nav { grid-template-columns:repeat(3,1fr); } .admin-main, .support-main { padding:18px; } .admin-cards { grid-template-columns:repeat(2,1fr); } }
 @media (max-width: 760px) { .react-hero h1 { font-size: 2.3rem; } .react-toolbar { flex-direction: column; } .detail-layout { grid-template-columns: 1fr; padding: 18px; gap: 24px; } .detail-copy h1 { font-size: 2rem; } .detail-related { grid-template-columns: repeat(2, 1fr); } }
 

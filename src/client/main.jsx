@@ -1385,6 +1385,83 @@ function ProductPage() {
   );
 }
 
+function RevenueChart({ title, data = [], period }) {
+  const width = 720;
+  const height = 250;
+  const padding = { top: 20, right: 18, bottom: 42, left: 58 };
+  const values = data.map(item => Number(item.revenue) || 0);
+  const maxValue = Math.max(...values, 1);
+  const chartWidth = width - padding.left - padding.right;
+  const chartHeight = height - padding.top - padding.bottom;
+  const points = data.map((item, index) => {
+    const x = data.length <= 1
+      ? padding.left + chartWidth / 2
+      : padding.left + (index / (data.length - 1)) * chartWidth;
+    const y = padding.top + chartHeight - ((Number(item.revenue) || 0) / maxValue) * chartHeight;
+    const rawDate = String(period === 'month' ? item.month : item.date || '');
+    const date = rawDate ? new Date(`${rawDate.slice(0, 10)}T00:00:00`) : null;
+    const label = date && !Number.isNaN(date.getTime())
+      ? (period === 'month'
+        ? date.toLocaleDateString('vi-VN', { month: '2-digit', year: 'numeric' })
+        : date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' }))
+      : rawDate;
+    return { x, y, label, value: Number(item.revenue) || 0 };
+  });
+  const linePoints = points.map(point => `${point.x},${point.y}`).join(' ');
+  const areaPoints = points.length
+    ? `${padding.left},${padding.top + chartHeight} ${linePoints} ${padding.left + chartWidth},${padding.top + chartHeight}`
+    : '';
+  const yLabels = [maxValue, maxValue / 2, 0];
+
+  return (
+    <section className="revenue-chart-panel">
+      <div className="revenue-chart-heading">
+        <div>
+          <h3>{title}</h3>
+          <small>Chỉ tính đơn hàng đã giao thành công</small>
+        </div>
+        <strong>{money(values.reduce((sum, value) => sum + value, 0))}</strong>
+      </div>
+      <div className="revenue-chart-scroll">
+        <svg className="revenue-chart" viewBox={`0 0 ${width} ${height}`} role="img" aria-label={title}>
+          {yLabels.map((value, index) => {
+            const y = padding.top + (index / (yLabels.length - 1)) * chartHeight;
+            return (
+              <g key={value}>
+                <line x1={padding.left} x2={width - padding.right} y1={y} y2={y} className="revenue-chart-grid" />
+                <text x={padding.left - 10} y={y + 4} textAnchor="end" className="revenue-chart-axis">
+                  {money(value).replace(' đ', '')}
+                </text>
+              </g>
+            );
+          })}
+          {points.length > 0 && (
+            <>
+              <polygon points={areaPoints} className="revenue-chart-area" />
+              <polyline points={linePoints} className="revenue-chart-line" />
+              {points.map(point => (
+                <g key={`${point.label}-${point.x}`}>
+                  <circle cx={point.x} cy={point.y} r="4" className="revenue-chart-point">
+                    <title>{`${point.label}: ${money(point.value)}`}</title>
+                  </circle>
+                  <text x={point.x} y={height - 15} textAnchor="middle" className="revenue-chart-label">
+                    {point.label}
+                  </text>
+                </g>
+              ))}
+            </>
+          )}
+          {points.length === 0 && (
+            <text x={width / 2} y={height / 2} textAnchor="middle" className="revenue-chart-empty">
+              Chưa có dữ liệu doanh thu
+            </text>
+          )}
+        </svg>
+      </div>
+    </section>
+  );
+}
+
 // ─── ADMIN PAGE ───────────────────────────────────────────────────────────────
 function AdminPage() {
   const user = readUser();
@@ -1484,12 +1561,18 @@ function AdminPage() {
         </header>
 
         {view === 'dashboard' && (
-          <div className="admin-cards">
-            <div className="admin-stat"><small>Doanh thu hôm nay</small><strong>{money(data?.stats?.revenue_today)}</strong></div>
-            <div className="admin-stat"><small>Doanh thu tháng</small><strong>{money(data?.stats?.revenue_month)}</strong></div>
-            <div className="admin-stat"><small>Đơn hôm nay</small><strong>{data?.stats?.orders_today || 0}</strong></div>
-            <div className="admin-stat"><small>Đơn chờ xử lý</small><strong>{data?.stats?.pending_orders || 0}</strong></div>
-          </div>
+          <>
+            <div className="admin-cards">
+              <div className="admin-stat"><small>Doanh thu hôm nay</small><strong>{money(data?.stats?.revenue_today)}</strong></div>
+              <div className="admin-stat"><small>Doanh thu tháng</small><strong>{money(data?.stats?.revenue_month)}</strong></div>
+              <div className="admin-stat"><small>Đơn hôm nay</small><strong>{data?.stats?.orders_today || 0}</strong></div>
+              <div className="admin-stat"><small>Đơn chờ xử lý</small><strong>{data?.stats?.pending_orders || 0}</strong></div>
+            </div>
+            <div className="revenue-charts">
+              <RevenueChart title="Doanh thu theo ngày" data={data?.revenue_chart} period="day" />
+              <RevenueChart title="Doanh thu theo tháng" data={data?.monthly_revenue_chart} period="month" />
+            </div>
+          </>
         )}
 
         {view === 'products' && (

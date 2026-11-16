@@ -8,17 +8,33 @@ const getDashboard = async (req: Request, res: Response): Promise<any> => {
     // Thống kê tổng quan:
     // Theo yêu cầu: Đơn hàng bị "huỷ" (status = 'cancelled') KHÔNG được tính vào doanh thu.
     // CHỈ KHI đơn hàng được xác nhận "đã giao thành công" (status = 'delivered') thì MỚI ĐƯỢC TÍNH vào doanh thu.
-    const [stats] = await db.query(`
-      SELECT
-        (SELECT COUNT(*) FROM orders WHERE DATE(created_at) = CURDATE() AND status != 'cancelled') as orders_today,
-        (SELECT COALESCE(SUM(total_amount), 0) FROM orders WHERE DATE(created_at) = CURDATE() AND status = 'delivered') as revenue_today,
-        (SELECT COUNT(*) FROM orders WHERE status = 'pending') as pending_orders,
-        (SELECT COUNT(*) FROM users WHERE role_id = 1) as total_customers,
-        (SELECT COUNT(*) FROM products WHERE is_active = 1) as total_products,
-        (SELECT COUNT(*) FROM products WHERE stock_quantity <= 5 AND is_active = 1) as low_stock_count,
-        (SELECT COALESCE(SUM(total_amount), 0) FROM orders WHERE MONTH(created_at) = MONTH(NOW()) AND YEAR(created_at) = YEAR(NOW()) AND status = 'delivered') as revenue_month,
-        (SELECT COUNT(*) FROM orders WHERE MONTH(created_at) = MONTH(NOW()) AND YEAR(created_at) = YEAR(NOW()) AND status != 'cancelled') as orders_month
+    // Supabase's execute_sql RPC may return no row for a SELECT made only of
+    // scalar subqueries, so aggregate each source table and compose the stats.
+    const [[todayOrders], [todayRevenue], [pendingOrders], [monthRevenue], [monthOrders]] = await Promise.all([
+      db.query("SELECT COUNT(*) as orders_today FROM orders WHERE DATE(created_at) = CURDATE() AND status != 'cancelled'"),
+      db.query("SELECT COALESCE(SUM(total_amount), 0) as revenue_today FROM orders WHERE DATE(updated_at) = CURDATE() AND status = 'delivered'"),
+      db.query("SELECT COUNT(*) as pending_orders FROM orders WHERE status = 'pending'"),
+      db.query("SELECT COALESCE(SUM(total_amount), 0) as revenue_month FROM orders WHERE MONTH(updated_at) = MONTH(NOW()) AND YEAR(updated_at) = YEAR(NOW()) AND status = 'delivered'"),
+      db.query("SELECT COUNT(*) as orders_month FROM orders WHERE MONTH(created_at) = MONTH(NOW()) AND YEAR(created_at) = YEAR(NOW()) AND status != 'cancelled'")
+    ]);
+    const [userStats] = await db.query(
+      'SELECT COUNT(*) as total_customers FROM users WHERE role_id = 1'
+    );
+    const [productStats] = await db.query(`
+      SELECT COUNT(*) as total_products,
+             COUNT(CASE WHEN stock_quantity <= 5 THEN 1 END) as low_stock_count
+      FROM products
+      WHERE is_active = 1
     `);
+    const stats = [{
+      ...(todayOrders[0] || {}),
+      ...(todayRevenue[0] || {}),
+      ...(pendingOrders[0] || {}),
+      ...(monthRevenue[0] || {}),
+      ...(monthOrders[0] || {}),
+      ...(userStats[0] || {}),
+      ...(productStats[0] || {})
+    }];
 
     // Đơn hàng gần đây
     const [recentOrders] = await db.query(`
@@ -32,17 +48,32 @@ const getDashboard = async (req: Request, res: Response): Promise<any> => {
       SELECT p.id, p.name, p.slug, SUM(oi.quantity) as total_sold, SUM(oi.subtotal) as total_revenue,
              (SELECT image_url FROM product_images pi WHERE pi.product_id = p.id AND pi.is_primary = 1 LIMIT 1) as image
       FROM order_items oi
-      JOIN orders o ON o.id = oi.order_id AND MONTH(o.created_at) = MONTH(NOW()) AND YEAR(o.created_at) = YEAR(NOW()) AND o.status = 'delivered'
+      JOIN orders o ON o.id = oi.order_id AND MONTH(o.updated_at) = MONTH(NOW()) AND YEAR(o.updated_at) = YEAR(NOW()) AND o.status = 'delivered'
       JOIN products p ON p.id = oi.product_id
       GROUP BY p.id ORDER BY total_sold DESC LIMIT 5
     `);
 
-    // Doanh thu 7 ngày qua: Chỉ tính từ các đơn đã giao thành công (status = 'delivered')
+    // Doanh thu theo ngày trong 7 ngày qua: Chỉ tính từ các đơn đã giao thành công.
     const [revenueChart] = await db.query(`
-      SELECT DATE(created_at) as date, COUNT(*) as orders, COALESCE(SUM(total_amount), 0) as revenue
+      SELECT DATE(updated_at) as date, COUNT(*) as orders, COALESCE(SUM(total_amount), 0) as revenue
       FROM orders
-      WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY) AND status = 'delivered'
-      GROUP BY DATE(created_at) ORDER BY date ASC
+      WHERE updated_at >= CURRENT_DATE - INTERVAL '6 days'
+        AND updated_at < CURRENT_DATE + INTERVAL '1 day'
+        AND status = 'delivered'
+      GROUP BY DATE(updated_at) ORDER BY date ASC
+    `);
+
+    // Doanh thu theo tháng trong 12 tháng qua: Chỉ tính từ các đơn đã giao thành công.
+    const [monthlyRevenueChart] = await db.query(`
+      SELECT DATE_TRUNC('month', updated_at)::date as month,
+             COUNT(*) as orders,
+             COALESCE(SUM(total_amount), 0) as revenue
+      FROM orders
+      WHERE updated_at >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '11 months'
+        AND updated_at < CURRENT_DATE + INTERVAL '1 day'
+        AND status = 'delivered'
+      GROUP BY DATE_TRUNC('month', updated_at)
+      ORDER BY month ASC
     `);
 
     // Sản phẩm sắp hết hàng
@@ -111,6 +142,7 @@ const getDashboard = async (req: Request, res: Response): Promise<any> => {
         recent_orders: recentOrders,
         top_products: topProducts,
         revenue_chart: revenueChart,
+        monthly_revenue_chart: monthlyRevenueChart,
         low_stock: lowStock,
         payment_methods_stats,
         total_payment_orders: totalOrdersCount,
